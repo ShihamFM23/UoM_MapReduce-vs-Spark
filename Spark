@@ -1,6 +1,6 @@
 spark-shell
 
-val df = spark.read.format("csv").option("header","true").option("header","true").load("s3://assignmentspark1/Input/DelayedFlights-updated.csv")
+val df = spark.read.format("csv").option("header","true").option("header","true").load("s3://assignmentbucket3/Input/DelayedFlights-updated.csv")
 
 df show()
 
