@@ -1,0 +1,798 @@
+Using username "hadoop".
+Authenticating with public key "imported-openssh-key"
+
+       __|  __|_  )
+       _|  (     /   Amazon Linux 2 AMI
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-2/
+1 package(s) needed for security, out of 8 available
+Run "sudo yum update" to apply all updates.
+
+EEEEEEEEEEEEEEEEEEEE MMMMMMMM           MMMMMMMM RRRRRRRRRRRRRRR
+E::::::::::::::::::E M:::::::M         M:::::::M R::::::::::::::R
+EE:::::EEEEEEEEE:::E M::::::::M       M::::::::M R:::::RRRRRR:::::R
+  E::::E       EEEEE M:::::::::M     M:::::::::M RR::::R      R::::R
+  E::::E             M::::::M:::M   M:::M::::::M   R:::R      R::::R
+  E:::::EEEEEEEEEE   M:::::M M:::M M:::M M:::::M   R:::RRRRRR:::::R
+  E::::::::::::::E   M:::::M  M:::M:::M  M:::::M   R:::::::::::RR
+  E:::::EEEEEEEEEE   M:::::M   M:::::M   M:::::M   R:::RRRRRR::::R
+  E::::E             M:::::M    M:::M    M:::::M   R:::R      R::::R
+  E::::E       EEEEE M:::::M     MMM     M:::::M   R:::R      R::::R
+EE:::::EEEEEEEE::::E M:::::M             M:::::M   R:::R      R::::R
+E::::::::::::::::::E M:::::M             M:::::M RR::::R      R::::R
+EEEEEEEEEEEEEEEEEEEE MMMMMMM             MMMMMMM RRRRRRR      RRRRRR
+
+[hadoop@ip-172-31-36-86 ~]$ sudo chown hadoop -R /var/log/hive
+[hadoop@ip-172-31-36-86 ~]$ mkdir /var/log/hive/user/hadoop
+[hadoop@ip-172-31-36-86 ~]$ aws s3 ls /
+2023-03-05 14:32:15 assignmentbucket4
+[hadoop@ip-172-31-36-86 ~]$ hive
+
+Logging initialized using configuration in file:/etc/hive/conf.dist/hive-log4j2.                                                                             properties Async: true
+hive> CREATE EXTERNAL TABLE DelayedFlights (
+    > Col1 INT,
+    > Year STRING,
+    > Month INT,
+    > DayofMonth INT,
+    > DayOfWeek INT,
+    > DepTime INT,
+    > CRSDepTime INT,
+    > ArrTime INT,
+    > CRSArrTime INT,
+    > UniqueCarrier STRING,
+    > FlightNum INT,
+    > TailNum STRING,
+    > ActualElapsedTime INT,
+    > CRSElapsedTime INT,
+    > AirTime INT,
+    > ArrDelay INT,
+    > DepDelay INT,
+    > Origin STRING,
+    > Dest STRING,
+    > Distance INT,
+    > TaxiIn INT,
+    > TaxiOut INT,
+    > Cancelled INT,
+    > CancellationCode STRING,
+    > Diverted INT,
+    > CarrierDelay INT,
+    > WeatherDelay INT,
+    > NASDelay INT,
+    > SecurityDelay INT,
+    > LateAircraftDelay INT
+    >
+    > )
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ','
+    > STORED AS TEXTFILE
+    > LOCATION 's3://assignmentbucket4/Input';
+OK
+Time taken: 11.104 seconds
+hive> SELECT Year, AVG((CarrierDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305153242_b06fbed6-02ce-4470-8945-8f42e17fc2bf
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188                                                                             _0001)
+
+Map 1: -/-      Reducer 2: 0/2  Reducer 3: 0/1
+Map 1: -/-      Reducer 2: 0/2  Reducer 3: 0/1
+Map 1: 0/1      Reducer 2: 0/2  Reducer 3: 0/1
+Map 1: 0/1      Reducer 2: 0/2  Reducer 3: 0/1
+Map 1: 0(+1)/1  Reducer 2: 0/2  Reducer 3: 0/1
+Map 1: 0(+1)/1  Reducer 2: 0/2  Reducer 3: 0/1
+Map 1: 1/1      Reducer 2: 0/2  Reducer 3: 0/1
+Map 1: 1/1      Reducer 2: 1(+1)/2      Reducer 3: 0/1
+Map 1: 1/1      Reducer 2: 2/2  Reducer 3: 0(+1)/1
+Map 1: 1/1      Reducer 2: 2/2  Reducer 3: 1/1
+OK
+2003    24.557549755575373
+2004    43.64459443230066
+2005    28.01977637202288
+2006    30.453296261292596
+2007    19.850007017971283
+2008    28.88346981456985
+2009    28.33058554239575
+2010    21.89310246015957
+Time taken: 19.756 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((CarrierDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305153405_f7a765a2-f15a-4463-9507-36f9fe5afb0a
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.60 s
+----------------------------------------------------------------------------------------------
+OK
+2003    24.557549755575373
+2004    43.64459443230066
+2005    28.01977637202288
+2006    30.453296261292596
+2007    19.850007017971283
+2008    28.88346981456985
+2009    28.33058554239575
+2010    21.89310246015957
+Time taken: 9.341 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((CarrierDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305153433_82cc940d-a918-4ab6-ba9a-6a90756b27ab
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.00 s
+----------------------------------------------------------------------------------------------
+OK
+2003    24.557549755575373
+2004    43.64459443230066
+2005    28.01977637202288
+2006    30.453296261292596
+2007    19.850007017971283
+2008    28.88346981456985
+2009    28.33058554239575
+2010    21.89310246015957
+Time taken: 8.62 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((CarrierDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305153452_008e1ac5-a61c-4108-acf3-560b4a1b0525
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.34 s
+----------------------------------------------------------------------------------------------
+OK
+2003    24.557549755575373
+2004    43.64459443230066
+2005    28.01977637202288
+2006    30.453296261292596
+2007    19.850007017971283
+2008    28.88346981456985
+2009    28.33058554239575
+2010    21.89310246015957
+Time taken: 8.953 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((CarrierDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305153515_fdee8aff-e7ae-4771-a9a0-13b2cde8337a
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.71 s
+----------------------------------------------------------------------------------------------
+OK
+2003    24.557549755575373
+2004    43.64459443230066
+2005    28.01977637202288
+2006    30.453296261292596
+2007    19.850007017971283
+2008    28.88346981456985
+2009    28.33058554239575
+2010    21.89310246015957
+Time taken: 9.305 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((NASDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305153606_394f3556-f488-4e77-a166-ae391d0560fc
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.19 s
+----------------------------------------------------------------------------------------------
+OK
+2003    29.686276314267346
+2004    18.24570061769958
+2005    16.63868805373129
+2006    18.119312329937703
+2007    30.625925917941924
+2008    30.16552562594132
+2009    37.63093330628511
+2010    33.87351363404217
+Time taken: 8.932 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((NASDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305153659_bef6305d-6422-44c5-bd22-ba08c95049b1
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.07 s
+----------------------------------------------------------------------------------------------
+OK
+2003    29.686276314267346
+2004    18.24570061769958
+2005    16.63868805373129
+2006    18.119312329937703
+2007    30.625925917941924
+2008    30.16552562594132
+2009    37.63093330628511
+2010    33.87351363404217
+Time taken: 8.593 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((NASDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305153720_f1782512-f842-4f37-bcdc-c1cda4a75591
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.54 s
+----------------------------------------------------------------------------------------------
+OK
+2003    29.686276314267346
+2004    18.24570061769958
+2005    16.63868805373129
+2006    18.119312329937703
+2007    30.625925917941924
+2008    30.16552562594132
+2009    37.63093330628511
+2010    33.87351363404217
+Time taken: 9.102 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((NASDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305153739_783c48cf-27b8-4ead-bff4-073f3b8ed381
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.91 s
+----------------------------------------------------------------------------------------------
+OK
+2003    29.686276314267346
+2004    18.24570061769958
+2005    16.63868805373129
+2006    18.119312329937703
+2007    30.625925917941924
+2008    30.16552562594132
+2009    37.63093330628511
+2010    33.87351363404217
+Time taken: 9.44 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((NASDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305153757_90cc79ab-244f-4145-9b6a-4fa147ac1bc3
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.69 s
+----------------------------------------------------------------------------------------------
+OK
+2003    29.686276314267346
+2004    18.24570061769958
+2005    16.63868805373129
+2006    18.119312329937703
+2007    30.625925917941924
+2008    30.16552562594132
+2009    37.63093330628511
+2010    33.87351363404217
+Time taken: 9.234 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((WeatherDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305153832_025fc166-14e7-4fd6-b870-4589f1de986e
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.84 s
+----------------------------------------------------------------------------------------------
+OK
+2003    7.8319479664511205
+2004    6.4475279976916555
+2005    5.85069715149616
+2006    4.588604183967953
+2007    4.042975783210287
+2008    3.7254490054008955
+2009    0.45316615137982363
+2010    2.9023312955584664
+Time taken: 9.347 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((WeatherDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305153854_ea0bb4c6-4d7f-4ae4-aae5-12ad3815094b
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.89 s
+----------------------------------------------------------------------------------------------
+OK
+2003    7.8319479664511205
+2004    6.4475279976916555
+2005    5.85069715149616
+2006    4.588604183967953
+2007    4.042975783210287
+2008    3.7254490054008955
+2009    0.45316615137982363
+2010    2.9023312955584664
+Time taken: 9.494 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((WeatherDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305153916_7a0f7747-4fd4-49af-93a7-496a7a344dde
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 9.01 s
+----------------------------------------------------------------------------------------------
+OK
+2003    7.8319479664511205
+2004    6.4475279976916555
+2005    5.85069715149616
+2006    4.588604183967953
+2007    4.042975783210287
+2008    3.7254490054008955
+2009    0.45316615137982363
+2010    2.9023312955584664
+Time taken: 9.542 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((WeatherDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305153934_10d19a58-39aa-4ce2-b59d-919aab5e000d
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.27 s
+----------------------------------------------------------------------------------------------
+OK
+2003    7.8319479664511205
+2004    6.4475279976916555
+2005    5.85069715149616
+2006    4.588604183967953
+2007    4.042975783210287
+2008    3.7254490054008955
+2009    0.45316615137982363
+2010    2.9023312955584664
+Time taken: 8.773 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((WeatherDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305153953_81ffa866-00c3-4bba-b1c7-dc8ca969138e
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.34 s
+----------------------------------------------------------------------------------------------
+OK
+2003    7.8319479664511205
+2004    6.4475279976916555
+2005    5.85069715149616
+2006    4.588604183967953
+2007    4.042975783210287
+2008    3.7254490054008955
+2009    0.45316615137982363
+2010    2.9023312955584664
+Time taken: 8.85 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((LateAircraftDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305154027_bbfe7845-9790-4258-adf6-d543628dd8a2
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.41 s
+----------------------------------------------------------------------------------------------
+OK
+2003    37.924225963706164
+2004    31.662176952308105
+2005    49.490838422749654
+2006    46.838787224801735
+2007    45.252432744291134
+2008    37.22555555408794
+2009    33.585314999939314
+2010    41.331052610239794
+Time taken: 8.94 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((LateAircraftDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305154052_8bef5aea-455e-4b7c-804c-2c989802e90a
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.18 s
+----------------------------------------------------------------------------------------------
+OK
+2003    37.924225963706164
+2004    31.662176952308105
+2005    49.490838422749654
+2006    46.838787224801735
+2007    45.252432744291134
+2008    37.22555555408794
+2009    33.585314999939314
+2010    41.331052610239794
+Time taken: 8.68 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((LateAircraftDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305154111_550b0b3c-67f5-47e5-bb8e-dcee9fd69ec5
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.80 s
+----------------------------------------------------------------------------------------------
+OK
+2003    37.924225963706164
+2004    31.662176952308105
+2005    49.490838422749654
+2006    46.838787224801735
+2007    45.252432744291134
+2008    37.22555555408794
+2009    33.585314999939314
+2010    41.331052610239794
+Time taken: 9.324 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((LateAircraftDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305154130_aa5c4cf3-8b58-4bc6-a979-24a2ccee59e8
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 9.04 s
+----------------------------------------------------------------------------------------------
+OK
+2003    37.924225963706164
+2004    31.662176952308105
+2005    49.490838422749654
+2006    46.838787224801735
+2007    45.252432744291134
+2008    37.22555555408794
+2009    33.585314999939314
+2010    41.331052610239794
+Time taken: 9.559 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((LateAircraftDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305154150_d9c4a312-fc3c-47e8-bb6a-ec059e329605
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.80 s
+----------------------------------------------------------------------------------------------
+OK
+2003    37.924225963706164
+2004    31.662176952308105
+2005    49.490838422749654
+2006    46.838787224801735
+2007    45.252432744291134
+2008    37.22555555408794
+2009    33.585314999939314
+2010    41.331052610239794
+Time taken: 9.303 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((SecurityDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305154217_8cced036-6486-4886-92ff-2f15eeaaa872
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.11 s
+----------------------------------------------------------------------------------------------
+OK
+2003    0.0
+2004    0.0
+2005    0.0
+2006    0.0
+2007    0.22865853658536586
+2008    0.0
+2009    0.0
+2010    0.0
+Time taken: 8.592 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((SecurityDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305154243_b5785627-52c9-48e3-8262-e4b234eecb95
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.93 s
+----------------------------------------------------------------------------------------------
+OK
+2003    0.0
+2004    0.0
+2005    0.0
+2006    0.0
+2007    0.22865853658536586
+2008    0.0
+2009    0.0
+2010    0.0
+Time taken: 9.477 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((SecurityDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305154303_85d8191e-444e-47ba-815a-d8df84928e65
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.33 s
+----------------------------------------------------------------------------------------------
+OK
+2003    0.0
+2004    0.0
+2005    0.0
+2006    0.0
+2007    0.22865853658536586
+2008    0.0
+2009    0.0
+2010    0.0
+Time taken: 8.837 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((SecurityDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305154320_83319067-a676-4d26-bd74-319aabf4d6e8
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.87 s
+----------------------------------------------------------------------------------------------
+OK
+2003    0.0
+2004    0.0
+2005    0.0
+2006    0.0
+2007    0.22865853658536586
+2008    0.0
+2009    0.0
+2010    0.0
+Time taken: 9.322 seconds, Fetched: 8 row(s)
+hive> SELECT Year, AVG((SecurityDelay / ArrDelay) * 100)
+    > FROM DelayedFlights
+    > WHERE Year BETWEEN 2003 AND 2010
+    > GROUP BY Year
+    > ORDER BY Year ASC;
+Query ID = hadoop_20230305154342_ddbc2c90-71c7-4042-ad99-f5e62c49f8a2
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1678029948188_0001)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      1          1        0        0       0       0
+Reducer 2 ...... container     SUCCEEDED      2          2        0        0       0       0
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0
+----------------------------------------------------------------------------------------------
+VERTICES: 03/03  [==========================>>] 100%  ELAPSED TIME: 8.85 s
+----------------------------------------------------------------------------------------------
+OK
+2003    0.0
+2004    0.0
+2005    0.0
+2006    0.0
+2007    0.22865853658536586
+2008    0.0
+2009    0.0
+2010    0.0
+Time taken: 9.33 seconds, Fetched: 8 row(s)
+hive>
