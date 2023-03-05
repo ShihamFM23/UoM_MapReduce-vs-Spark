@@ -3,7 +3,7 @@ mkdir /var/log/hive/user/hadoop
 
 aws s3 ls /
 
-Hive
+hive
 
 CREATE EXTERNAL TABLE DelayedFlights (
 Col1 INT,
@@ -41,7 +41,7 @@ LateAircraftDelay INT
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 STORED AS TEXTFILE
-LOCATION 's3://assignmentbucket3/input';
+LOCATION 's3://assignmentbucket4/Input';
 
 SELECT Year, AVG((CarrierDelay / ArrDelay) * 100)
 FROM DelayedFlights
